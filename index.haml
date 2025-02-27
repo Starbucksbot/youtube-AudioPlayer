@@ -5,25 +5,59 @@
     %meta{ name: "viewport", content: "width=device-width, initial-scale=1.0" }
     %title Fine Tunes Radio
     %link{ rel: "stylesheet", href: "style.css" }
-    %link{ href: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap", rel: "stylesheet" }
+    %link{ href: "https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700", rel: "stylesheet" }
+    %link{ href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css", rel: "stylesheet" }
   %body
-    .main-container
-      .sidebar
-        %h2 Recently Played
-        %ul#recent-songs
-      .container
-        .header
-          %span.menu-icon ☰
-          %h1 Music Now!
-          %span.search-icon 🔍
-        .geometric-bg
-        .now-playing
-          %img.album-art{ src: "https://via.placeholder.com/100", alt: "Album Art" }
-          .track-info#result
-        %audio#player{ controls: true }
-        .controls
-          %button.replay-btn{ onclick: "replayTrack()" } Replay
-      .next-sidebar
-        %h2 Next Track
-        #next-song
+    .player
+      .player_inner
+        .player_inner__top
+          .t_left
+            %i.fa.fa-bars
+          .t_mid
+            %input#searchInput{ type: "text", placeholder: "Search YouTube..." }
+          .t_right
+            %i.fa.fa-search
+        .player_inner__middle
+          %input.trigger--4{ type: "radio", name: "omni" }
+          %input.trigger--3{ type: "radio", name: "omni" }
+          %input.trigger--2{ type: "radio", name: "omni" }
+          %input.trigger--1{ type: "radio", name: "omni" }
+          %input.empty
+          .cube
+            .cube_inner
+              .cube_inner__front
+                .details
+                  .details_album
+                  .track-info#result
+                %button.replay-btn{ onclick: "replayTrack()" } Replay
+              .cube_inner__left
+                .options
+                  %ul#recent-songs
+              .cube_inner__right
+                .volume
+                  -(1..14).each do
+                    .volume_pip
+                  %div#next-song
+        .r_trim
+        .l_trim
+        .shadow_right
+        .shadow_left
+        .player_inner__bottom
+          .options
+            %i.fa.fa-repeat
+            %i.fa.fa-random
+          .playbar
+            .playbar_inner
+            .playbar_left
+              %span 0:00
+            .playbar_right
+              %span 3:45
+          .controls
+            .controls_left
+              %i.fa.fa-step-backward
+            .controls_middle
+              %i.fa.fa-play-circle
+            .controls_right
+              %i.fa.fa-step-forward
+      %audio#player{ controls: true }
     %script{ src: "client.js" }
