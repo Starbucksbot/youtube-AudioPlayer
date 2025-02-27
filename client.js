@@ -21,9 +21,11 @@ let isPlaying = false;
 let isMuted = false;
 
 audioPlayer.volume = 1; // Default volume
+console.log('Script loaded'); // Debug: Confirm script execution
 
 async function search() {
-    const query = searchInput.value.trim(); // Trim to avoid empty searches
+    console.log('Search function called'); // Debug
+    const query = searchInput.value.trim();
     if (!query) {
         resultDiv.textContent = 'Please enter a search term';
         return;
@@ -34,6 +36,7 @@ async function search() {
         const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
+        console.log('Search response:', data); // Debug
         if (data.results && data.results.length > 0) {
             displayResults(data.results);
         } else {
@@ -62,6 +65,7 @@ function displayResults(results) {
 }
 
 async function playTrack(url, title) {
+    console.log('Play function called with URL:', url); // Debug
     if (!url) {
         resultDiv.textContent = 'No valid URL to play';
         return;
@@ -86,6 +90,7 @@ async function playTrack(url, title) {
 }
 
 function togglePlay() {
+    console.log('Toggle Play clicked'); // Debug
     if (isPlaying) {
         audioPlayer.pause();
         isPlaying = false;
@@ -98,11 +103,13 @@ function togglePlay() {
 }
 
 function previousTrack() {
+    console.log('Previous Track clicked'); // Debug
     // Placeholder: Implement history if needed
     resultDiv.textContent = 'Previous not implemented';
 }
 
 function nextTrack() {
+    console.log('Next Track clicked'); // Debug
     if (nextTrack) {
         playTrack(nextTrack.url, nextTrack.title);
     } else {
@@ -133,6 +140,7 @@ function formatTime(seconds) {
 }
 
 function toggleVolume() {
+    console.log('Volume clicked'); // Debug
     isMuted = !isMuted;
     audioPlayer.muted = isMuted;
     volumeBtn.innerHTML = isMuted ? '<i class="fa fa-volume-mute"></i>' : '<i class="fa fa-volume-up"></i>';
@@ -140,10 +148,12 @@ function toggleVolume() {
 }
 
 function toggleSleepOptions() {
+    console.log('Sleep clicked'); // Debug
     sleepOptions.classList.toggle('active');
 }
 
 function setSleepTimer() {
+    console.log('Set Sleep clicked'); // Debug
     const hours = parseInt(sleepTimeSelect.value);
     const milliseconds = hours * 60 * 60 * 1000;
     sleepOptions.classList.remove('active');
@@ -219,19 +229,32 @@ async function loadRecentSongs() {
     }
 }
 
-searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') search();
-});
+// Ensure all buttons are found before adding listeners
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded');
 
-document.querySelector('.search-btn').addEventListener('click', search);
-sleepBtn.addEventListener('click', toggleSleepOptions);
-document.querySelector('.sleep-options button').addEventListener('click', setSleepTimer);
-volumeSlider.addEventListener('input', (e) => {
-    audioPlayer.volume = e.target.value;
-});
-volumeBtn.addEventListener('click', toggleVolume);
+    if (!searchInput) console.error('searchInput not found');
+    if (!playBtn) console.error('playBtn not found');
+    if (!prevBtn) console.error('prevBtn not found');
+    if (!nextBtn) console.error('nextBtn not found');
+    if (!volumeBtn) console.error('volumeBtn not found');
+    if (!sleepBtn) console.error('sleepBtn not found');
 
-window.onload = () => {
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') search();
+    });
+
+    document.querySelector('.search-btn').addEventListener('click', search);
+    playBtn.addEventListener('click', togglePlay);
+    prevBtn.addEventListener('click', previousTrack);
+    nextBtn.addEventListener('click', nextTrack);
+    volumeBtn.addEventListener('click', toggleVolume);
+    sleepBtn.addEventListener('click', toggleSleepOptions);
+    document.querySelector('.sleep-options button').addEventListener('click', setSleepTimer);
+    volumeSlider.addEventListener('input', (e) => {
+        audioPlayer.volume = e.target.value;
+    });
+
     loadRecentSongs();
     updateProgress();
-};
+});
