@@ -5,11 +5,11 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 4200;
+const port = 4200; // 
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public')); // Serve files from public folder
 
 let searchHistory = [];
 try {
@@ -61,7 +61,6 @@ app.get('/recommend', (req, res) => {
 });
 
 async function getFirstVideoUrl(query) {
-  // Simplified search (in reality, use YouTube API for better results)
   const info = await ytdl.getInfo(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`);
   return info.videoDetails.video_url;
 }
