@@ -1,23 +1,23 @@
-import { spawn } from 'child_process';
-import fs from 'fs';
+import { spawn } from 'node:child_process';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 let searchHistory = [];
 try {
-  searchHistory = JSON.parse(fs.readFileSync('searchHistory.json', 'utf8'));
+  searchHistory = JSON.parse(readFileSync('searchHistory.json', 'utf8'));
 } catch (err) {
   console.log('Starting with empty search history:', err.message);
 }
 
 function saveSearchHistory() {
   if (searchHistory.length > 30) searchHistory = searchHistory.slice(-30);
-  fs.writeFileSync('searchHistory.json', JSON.stringify(searchHistory));
+  writeFileSync('searchHistory.json', JSON.stringify(searchHistory));
 }
 
-export default function handler(req, res) {
+export default defineEventHandler((event) => {
   const lastSearch = searchHistory[searchHistory.length - 1];
   console.log('Last search:', lastSearch);
   if (!lastSearch || !lastSearch.url) {
-    return res.json({ url: null, title: null });
+    return { url: null, title: null };
   }
 
   const ytDlp = spawn('yt-dlp', [lastSearch.url, '--dump-json']);
@@ -27,13 +27,12 @@ export default function handler(req, res) {
     if (code === 0) {
       const parsedInfo = JSON.parse(output);
       const related = parsedInfo.related_videos?.[0];
-      res.json({
+      return {
         url: related ? `https://www.youtube.com/watch?v=${related.id}` : null,
         title: related ? related.title : null,
-      });
-    } else {
-      console.log('Recommendation failed, code:', code);
-      res.json({ url: null, title: null });
+      };
     }
+    console.log('Recommendation failed, code:', code);
+    return { url: null, title: null };
   });
-}
+});

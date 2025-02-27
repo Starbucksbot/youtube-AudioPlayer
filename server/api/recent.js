@@ -1,14 +1,14 @@
-import fs from 'fs';
+import { readFileSync } from 'node:fs';
 
 let searchHistory = [];
 try {
-  searchHistory = JSON.parse(fs.readFileSync('searchHistory.json', 'utf8'));
+  searchHistory = JSON.parse(readFileSync('searchHistory.json', 'utf8'));
 } catch (err) {
   console.log('Starting with empty search history:', err.message);
 }
 
-export default function handler(req, res) {
+export default defineEventHandler(() => {
   const recent = searchHistory.slice(-5).reverse();
   console.log('Recent tracks:', recent.length);
-  res.status(200).json(recent);
-}
+  return recent;
+});

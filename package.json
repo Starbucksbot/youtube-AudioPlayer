@@ -3,19 +3,20 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-      "dev": "next dev",
-      "build": "next build",
-      "start": "next start"
+      "dev": "nuxt dev",
+      "build": "nuxt build",
+      "start": "nuxt start",
+      "pm2": "pm2 start ecosystem.config.js --env production"
     },
     "dependencies": {
-      "next": "^14.0.0", // Use the latest version as of Feb 2025
-      "react": "^18.2.0",
-      "react-dom": "^18.2.0",
-      "cors": "^2.8.5",
+      "nuxt": "^3.11.2", 
+      "vue": "^3.4.21",
       "youtube-search": "^1.1.6"
     },
     "devDependencies": {
-      "eslint": "^8.0.0",
-      "eslint-config-next": "^14.0.0"
+      "@nuxt/devtools": "^1.0.7",
+      "@nuxtjs/eslint-config-typescript": "^12.1.0",
+      "eslint": "^8.57.0",
+      "nuxt": "^3.11.2"
     }
   }
