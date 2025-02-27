@@ -1,15 +1,20 @@
 {
     "name": "audio-player",
     "version": "1.0.0",
-    "description": "Minimal YouTube audio player",
+    "description": "YouTube Audio Player with Vue.js",
     "main": "server.js",
     "scripts": {
-      "start": "node server.js"
+      "start": "node server.js",
+      "build": "vue-cli-service build"
     },
     "dependencies": {
       "express": "^4.18.2",
       "ytdl-core": "^4.11.5",
       "cors": "^2.8.5",
-      "fs": "^0.0.1-security"
+      "fs": "^0.0.1-security",
+      "vue": "^3.2.47"
+    },
+    "devDependencies": {
+      "@vue/cli-service": "^5.0.8"
     }
   }
