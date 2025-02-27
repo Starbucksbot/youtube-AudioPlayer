@@ -1,14 +1,21 @@
 {
-  "name": "audio-player",
-  "version": "1.0.0",
-  "description": "Minimal YouTube Audio Player",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "youtube-search": "^1.1.6"
+    "name": "youtube-audio-player",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start"
+    },
+    "dependencies": {
+      "next": "^14.0.0", // Use the latest version as of Feb 2025
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "cors": "^2.8.5",
+      "youtube-search": "^1.1.6"
+    },
+    "devDependencies": {
+      "eslint": "^8.0.0",
+      "eslint-config-next": "^14.0.0"
+    }
   }
-}

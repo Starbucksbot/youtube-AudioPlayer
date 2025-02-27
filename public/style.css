@@ -1,409 +1,316 @@
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  font-family: 'Roboto', Arial, sans-serif;
-  background: url('https://wallpapers.com/images/featured/mountains-sunset-oly4p350y8tjfw8a.jpg') no-repeat center center fixed;
-  background-size: cover;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  color: #e0e0e0;
-  overflow-x: hidden;
+    font-family: 'Roboto', Arial, sans-serif;
+    background: url('https://wallpapers.com/images/featured/mountains-sunset-oly4p350y8tjfw8a.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #e0e0e0;
+    overflow-x: hidden;
 }
 
 body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(10, 10, 15, 0.85);
-  z-index: -1;
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 15, 0.85);
+    z-index: -1;
 }
 
 .main-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: stretch;
-  width: 100%;
-  max-width: 1100px;
-  gap: 20px;
-  z-index: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
+    max-width: 1100px;
+    gap: 20px;
+    z-index: 1;
 }
 
 .sidebar, .next-sidebar {
-  background: rgba(0, 80, 80, 0.9);
-  padding: 20px;
-  border-radius: 12px;
-  width: 250px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(5px);
+    background: rgba(0, 80, 80, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
 }
 
 .sidebar h2, .next-sidebar h2 {
-  font-size: 18px;
-  color: #ffffff;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .sidebar ul {
-  list-style: none;
-  padding: 0;
+    list-style: none;
+    padding: 0;
 }
 
 .sidebar li {
-  margin: 10px 0;
-  color: #00ff00;
-  cursor: pointer;
-  font-size: 14px;
-  word-wrap: break-word;
-  transition: color 0.3s ease;
+    margin: 10px 0;
+    color: #00ff00;
+    cursor: pointer;
+    font-size: 14px;
+    word-wrap: break-word;
+    transition: color 0.3s ease;
 }
 
 .sidebar li:hover {
-  color: #99ff99;
+    color: #99ff99;
 }
 
-#next-song {
-  color: #ffffff;
-  font-size: 14px;
-  padding: 10px;
-  background: rgba(0, 255, 255, 0.05);
-  border-radius: 8px;
-  margin-top: 10px;
+.next-sidebar div {
+    color: #ffffff;
+    font-size: 14px;
+    padding: 10px;
+    background: rgba(0, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-top: 10px;
 }
 
 .container {
-  background: rgba(0, 80, 80, 0.9);
-  padding: 25px;
-  border-radius: 12px;
-  flex: 1;
-  max-width: 500px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(5px);
-  position: relative;
-  overflow: hidden;
+    background: rgba(0, 80, 80, 0.9);
+    padding: 25px;
+    border-radius: 12px;
+    flex: 1;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 h1 {
-  color: #ffffff;
-  font-size: 24px;
-  letter-spacing: 1.5px;
-  font-weight: 500;
-  margin: 0;
+    color: #ffffff;
+    font-size: 24px;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+    margin: 0;
 }
 
 .now-playing {
-  position: relative;
-  margin: 20px 0;
-  padding: 20px;
-  border-radius: 10px;
-  background: inherit;
-  overflow: hidden;
+    position: relative;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 10px;
+    background: inherit;
+    overflow: hidden;
 }
 
 .album-art {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.2;
-  z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.2;
+    z-index: 1;
 }
 
 .search-overlay {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  gap: 10px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 10px;
 }
 
-#searchInput {
-  padding: 12px 20px;
-  width: 70%;
-  max-width: 250px;
-  border: none;
-  border-radius: 25px;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  outline: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+input[type="text"] {
+    padding: 12px 20px;
+    width: 70%;
+    max-width: 250px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
 
-#searchInput::placeholder {
-  color: #cccccc;
+input[type="text"]::placeholder {
+    color: #cccccc;
 }
 
-.search-btn {
-  padding: 12px 20px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease;
+button {
+    padding: 12px 20px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
-.search-btn:hover,
-.search-btn:active {
-  background: #ffffff;
-  color: #000000;
+button:hover,
+button:active {
+    background: #ffffff;
+    color: #000000;
 }
 
 .track-info {
-  font-size: 16px;
-  color: #ffffff;
-  margin-top: 10px;
-  z-index: 2;
-  position: relative;
+    font-size: 16px;
+    color: #ffffff;
+    margin-top: 10px;
+    z-index: 2;
+    position: relative;
 }
 
 .custom-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.control-btn {
-  padding: 12px 20px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.control-btn:hover,
-.control-btn:active {
-  background: #ffffff;
-  color: #000000;
-}
-
-.play-btn i {
-  font-size: 20px;
-}
-
-.prev-btn i,
-.next-btn i {
-  font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
 }
 
 .progress-bar {
-  flex-grow: 1;
-  margin: 0 20px;
-  position: relative;
+    flex-grow: 1;
+    margin: 0 20px;
+    position: relative;
 }
 
 .progress {
-  height: 6px;
-  background: #00ff00;
-  border-radius: 3px;
-  width: 0%;
-  transition: width 0.1s linear;
+    height: 6px;
+    background: #00ff00;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.1s linear;
 }
 
 .time {
-  font-size: 12px;
-  color: #ffffff;
-  margin-top: 5px;
-}
-
-.volume-btn {
-  padding: 12px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.volume-btn:hover,
-.volume-btn:active {
-  background: #ffffff;
-  color: #000000;
+    font-size: 12px;
+    color: #ffffff;
+    margin-top: 5px;
 }
 
 .volume-slider {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: -100px;
-  width: 100px;
+    display: none;
+    position: absolute;
+    right: 0;
+    top: -100px;
+    width: 100px;
 }
 
 .volume-slider.active {
-  display: block;
+    display: block;
 }
 
-#volume {
-  width: 100%;
-  height: 6px;
-  -webkit-appearance: none;
-  background: rgba(255, 255, 255, 0.1);
-  outline: none;
-  border-radius: 3px;
+input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    border-radius: 3px;
 }
 
-#volume::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 12px;
-  height: 12px;
-  background: #00ff00;
-  cursor: pointer;
-  border-radius: 50%;
-}
-
-audio {
-  display: none; /* Hide default audio element */
-}
-
-.controls {
-  margin-top: 20px;
-}
-
-.sleep-btn {
-  padding: 10px 20px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.sleep-btn:hover,
-.sleep-btn:active {
-  background: #ffffff;
-  color: #000000;
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #00ff00;
+    cursor: pointer;
+    border-radius: 50%;
 }
 
 .sleep-options {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 80, 80, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  z-index: 10;
-  text-align: center;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 80, 80, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    text-align: center;
 }
 
 .sleep-options.active {
-  display: block;
+    display: block;
 }
 
-#sleep-time {
-  padding: 10px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+select {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    width: 100%;
 }
 
-#sleep-time option {
-  background: rgba(0, 80, 80, 0.9);
-  color: #ffffff;
-}
-
-.sleep-options button {
-  padding: 10px 20px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.sleep-options button:hover,
-.sleep-options button:active {
-  background: #ffffff;
-  color: #000000;
+select option {
+    background: rgba(0, 80, 80, 0.9);
+    color: #ffffff;
 }
 
 @media (max-width: 768px) {
-  .main-container {
-      flex-direction: column;
-      align-items: center;
-  }
-  .sidebar, .next-sidebar {
-      width: 100%;
-      max-width: 500px;
-  }
-  .container {
-      width: 100%;
-      max-width: 500px;
-  }
-  h1 {
-      font-size: 20px;
-  }
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .sidebar, .next-sidebar {
+        width: 100%;
+        max-width: 500px;
+    }
+    .container {
+        width: 100%;
+        max-width: 500px;
+    }
+    h1 {
+        font-size: 20px;
+    }
 }
 
 @media (max-width: 480px) {
-  h1 {
-      font-size: 18px;
-  }
-  .custom-controls {
-      flex-direction: column;
-      gap: 10px;
-  }
-  .progress-bar {
-      margin: 10px 0;
-  }
-  #searchInput {
-      width: 60%;
-      max-width: none;
-      padding: 10px 15px;
-  }
-  .search-btn {
-      padding: 10px 15px;
-  }
-  .sleep-btn {
-      padding: 8px 16px;
-  }
-  .control-btn {
-      padding: 10px 15px;
-  }
-  .volume-btn {
-      padding: 10px;
-  }
+    h1 {
+        font-size: 18px;
+    }
+    .custom-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .progress-bar {
+        margin: 10px 0;
+    }
+    input[type="text"] {
+        width: 60%;
+        max-width: none;
+        padding: 10px 15px;
+    }
+    button {
+        padding: 10px 15px;
+    }
 }
