@@ -3,10 +3,13 @@ const ytdl = require('ytdl-core');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const youTubeSearch = require('youtube-search');
+const search = require('youtube-search');
 
 const app = express();
 const port = 4200;
+
+// Replace with your YouTube API key
+const YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE';
 
 app.use(cors());
 app.use(express.json());
@@ -63,15 +66,20 @@ app.get('/recommend', (req, res) => {
 });
 
 async function getFirstVideoUrl(query) {
-  const opts = { maxResults: 1, key: 'YOUR_YOUTUBE_API_KEY' }; // Get a free API key from Google Cloud
-  const searchResults = await new Promise((resolve, reject) => {
-    youTubeSearch(query, opts, (err, results) => {
-      if (err) reject(err);
-      else resolve(results);
+  const opts = {
+    maxResults: 1,
+    key: YOUTUBE_API_KEY,
+    type: 'video'
+  };
+
+  return new Promise((resolve, reject) => {
+    search(query, opts, (err, results) => {
+      if (err) return reject(err);
+      if (!results || results.length === 0) return reject(new Error('No results found'));
+      const url = results[0].link; // youtube-search returns 'link' as the video URL
+      resolve(url);
     });
   });
-  const videoId = searchResults[0].id;
-  return `https://www.youtube.com/watch?v=${videoId}`;
 }
 
 app.listen(port, '0.0.0.0', () => {

@@ -10,6 +10,7 @@
     "express": "^4.18.2",
     "ytdl-core": "^4.11.5",
     "cors": "^2.8.5",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "youtube-search": "^1.1.6"
   }
 }
