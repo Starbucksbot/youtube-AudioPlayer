@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Roboto', Arial, sans-serif;
-    background: url('/placeholder.jpg') no-repeat center center fixed;
+    background: url('https://static.vecteezy.com/system/resources/thumbnails/040/710/643/small_2x/ai-generated-majestic-mountain-peak-sunset-sky-tranquil-scene-nature-beauty-generated-by-ai-photo.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
     display: flex;

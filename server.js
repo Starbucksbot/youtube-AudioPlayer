@@ -12,8 +12,18 @@ const port = config.PORT;
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the public folder
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the public folder with correct MIME types
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    } else if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/jpeg'); // Adjust for other image types if needed
+    }
+  }
+}));
 
 // Serve index.html from the public folder as the default route
 app.get('/', (req, res) => {

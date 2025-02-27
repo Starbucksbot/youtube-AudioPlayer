@@ -23,6 +23,37 @@ let isMuted = false;
 audioPlayer.volume = 1; // Default volume
 console.log('Client script loaded');
 
+// Ensure DOM elements exist before adding listeners
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded');
+
+    // Debug: Check if elements are found
+    if (!searchInput) console.error('searchInput not found');
+    if (!playBtn) console.error('playBtn not found');
+    if (!prevBtn) console.error('prevBtn not found');
+    if (!nextBtn) console.error('nextBtn not found');
+    if (!volumeBtn) console.error('volumeBtn not found');
+    if (!sleepBtn) console.error('sleepBtn not found');
+
+    // Add event listeners
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') search();
+    });
+    document.querySelector('.search-btn').addEventListener('click', search);
+    playBtn.addEventListener('click', togglePlay);
+    prevBtn.addEventListener('click', previousTrack);
+    nextBtn.addEventListener('click', nextTrack);
+    volumeBtn.addEventListener('click', toggleVolume);
+    sleepBtn.addEventListener('click', toggleSleepOptions);
+    document.querySelector('.sleep-options button').addEventListener('click', setSleepTimer);
+    volumeSlider.addEventListener('input', (e) => {
+        audioPlayer.volume = e.target.value;
+    });
+
+    loadRecentSongs();
+    updateProgress();
+});
+
 async function search() {
     console.log('Search function called');
     const query = searchInput.value.trim();
@@ -34,7 +65,7 @@ async function search() {
     resultDiv.textContent = 'Searching...';
     try {
         const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
         console.log('Search response:', data);
         if (data.results && data.results.length > 0) {
@@ -228,31 +259,3 @@ async function loadRecentSongs() {
         console.error('Recent songs error:', error);
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded');
-
-    if (!searchInput) console.error('searchInput not found');
-    if (!playBtn) console.error('playBtn not found');
-    if (!prevBtn) console.error('prevBtn not found');
-    if (!nextBtn) console.error('nextBtn not found');
-    if (!volumeBtn) console.error('volumeBtn not found');
-    if (!sleepBtn) console.error('sleepBtn not found');
-
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') search();
-    });
-    document.querySelector('.search-btn').addEventListener('click', search);
-    playBtn.addEventListener('click', togglePlay);
-    prevBtn.addEventListener('click', previousTrack);
-    nextBtn.addEventListener('click', nextTrack);
-    volumeBtn.addEventListener('click', toggleVolume);
-    sleepBtn.addEventListener('click', toggleSleepOptions);
-    document.querySelector('.sleep-options button').addEventListener('click', setSleepTimer);
-    volumeSlider.addEventListener('input', (e) => {
-        audioPlayer.volume = e.target.value;
-    });
-
-    loadRecentSongs();
-    updateProgress();
-});
