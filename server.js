@@ -3,12 +3,11 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const search = require('youtube-search');
-const youtubedl = require('yt-dlp-exec'); // New dependency
+const { spawn } = require('child_process'); // For streaming with yt-dlp
+const config = require('./config'); // Load config
 
 const app = express();
-const port = 4200;
-
-const YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE'; // Replace with your key
+const port = config.PORT;
 
 app.use(cors());
 app.use(express.json());
@@ -37,7 +36,7 @@ app.get('/search', async (req, res) => {
     }
 });
 
-app.get('/stream', async (req, res) => {
+app.get('/stream', (req, res) => {
     const url = req.query.url;
     console.log('Streaming URL:', url);
     if (!url || !url.includes('youtube.com')) {
@@ -45,22 +44,38 @@ app.get('/stream', async (req, res) => {
         return res.status(400).send('Invalid video URL');
     }
     try {
-        // Use yt-dlp to stream audio
-        const stream = youtubedl.execStream([
+        // Spawn yt-dlp process to stream audio
+        const ytDlp = spawn('yt-dlp', [
             url,
             '-f', 'bestaudio', // Best audio format
-            '-o', '-', // Output to stdout (stream)
+            '-o', '-', // Output to stdout
             '--no-playlist', // Avoid playlists
         ]);
+
         res.setHeader('Content-Type', 'audio/mpeg');
-        stream.on('error', (err) => {
-            console.error('Stream error:', err);
-            res.status(500).send('Streaming failed');
+
+        // Pipe the audio stream to the response
+        ytDlp.stdout.pipe(res);
+
+        ytDlp.stderr.on('data', (data) => {
+            console.error('yt-dlp stderr:', data.toString());
         });
-        stream.pipe(res);
+
+        ytDlp.on('error', (err) => {
+            console.error('Stream spawn error:', err);
+            if (!res.headersSent) res.status(500).send('Streaming failed');
+        });
+
+        ytDlp.on('close', (code) => {
+            if (code !== 0) {
+                console.error(`yt-dlp exited with code ${code}`);
+                if (!res.headersSent) res.status(500).send('Streaming failed');
+            }
+        });
+
     } catch (error) {
         console.error('Stream setup error:', error);
-        res.status(500).send('Streaming error');
+        if (!res.headersSent) res.status(500).send('Streaming error');
     }
 });
 
@@ -70,10 +85,18 @@ app.get('/recommend', async (req, res) => {
         return res.json({ url: null });
     }
     try {
-        const info = await youtubedl(lastSearch.url, ['--dump-json']);
-        const parsedInfo = JSON.parse(info);
-        const related = parsedInfo.related_videos?.[0]?.id || null;
-        res.json({ url: related ? `https://www.youtube.com/watch?v=${related}` : null });
+        const ytDlp = spawn('yt-dlp', [lastSearch.url, '--dump-json']);
+        let output = '';
+        ytDlp.stdout.on('data', (data) => (output += data));
+        ytDlp.on('close', (code) => {
+            if (code === 0) {
+                const parsedInfo = JSON.parse(output);
+                const related = parsedInfo.related_videos?.[0]?.id || null;
+                res.json({ url: related ? `https://www.youtube.com/watch?v=${related}` : null });
+            } else {
+                res.json({ url: null });
+            }
+        });
     } catch (err) {
         console.error('Recommendation error:', err);
         res.json({ url: null });
@@ -88,7 +111,7 @@ app.get('/recent', (req, res) => {
 async function getVideoResults(query) {
     const opts = {
         maxResults: 5,
-        key: YOUTUBE_API_KEY,
+        key: config.YOUTUBE_API_KEY, // Use from config
         type: 'video'
     };
     return new Promise((resolve, reject) => {
