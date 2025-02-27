@@ -6,17 +6,16 @@
       "dev": "nuxt dev",
       "build": "nuxt build",
       "start": "nuxt start",
-      "pm2": "pm2 start ecosystem.config.js --env production"
+      "pm2": "nuxt build && pm2 start ecosystem.config.js --env production"
     },
     "dependencies": {
-      "nuxt": "^3.11.2", 
+      "nuxt": "^3.11.2",
       "vue": "^3.4.21",
       "youtube-search": "^1.1.6"
     },
     "devDependencies": {
       "@nuxt/devtools": "^1.0.7",
       "@nuxtjs/eslint-config-typescript": "^12.1.0",
-      "eslint": "^8.57.0",
-      "nuxt": "^3.11.2"
+      "eslint": "^8.57.0"
     }
   }

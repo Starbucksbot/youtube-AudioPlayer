@@ -6,5 +6,12 @@ export default defineNuxtConfig({
         youtubeApiKey: process.env.YOUTUBE_API_KEY,
       },
     },
-    modules: ['@nuxtjs/eslint-config-typescript'],
+    server: {
+      port: process.env.PORT || 4200,
+    },
+    hooks: {
+      'server:listen' (server) {
+        console.log(`Nuxt server listening on port ${process.env.PORT || 4200}`);
+      },
+    },
   });
