@@ -3,13 +3,14 @@ const ytdl = require('ytdl-core');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const youTubeSearch = require('youtube-search');
 
 const app = express();
-const port = 4200; // 
+const port = 4200;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public')); // Serve files from public folder
+app.use(express.static('public'));
 
 let searchHistory = [];
 try {
@@ -31,6 +32,7 @@ app.get('/search', async (req, res) => {
     saveSearchHistory();
     res.json({ url });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Search failed' });
   }
 });
@@ -61,8 +63,15 @@ app.get('/recommend', (req, res) => {
 });
 
 async function getFirstVideoUrl(query) {
-  const info = await ytdl.getInfo(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`);
-  return info.videoDetails.video_url;
+  const opts = { maxResults: 1, key: 'YOUR_YOUTUBE_API_KEY' }; // Get a free API key from Google Cloud
+  const searchResults = await new Promise((resolve, reject) => {
+    youTubeSearch(query, opts, (err, results) => {
+      if (err) reject(err);
+      else resolve(results);
+    });
+  });
+  const videoId = searchResults[0].id;
+  return `https://www.youtube.com/watch?v=${videoId}`;
 }
 
 app.listen(port, '0.0.0.0', () => {
