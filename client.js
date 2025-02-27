@@ -23,21 +23,30 @@ let isMuted = false;
 audioPlayer.volume = 1; // Default volume
 
 async function search() {
-    const query = searchInput.value;
-    if (!query) return;
+    const query = searchInput.value.trim(); // Trim to avoid empty searches
+    if (!query) {
+        resultDiv.textContent = 'Please enter a search term';
+        return;
+    }
 
     resultDiv.textContent = 'Searching...';
     try {
         const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        displayResults(data.results);
+        if (data.results && data.results.length > 0) {
+            displayResults(data.results);
+        } else {
+            resultDiv.textContent = 'No results found';
+        }
     } catch (error) {
-        resultDiv.textContent = 'Error searching';
+        console.error('Search error:', error);
+        resultDiv.textContent = 'Error searching. Check console for details.';
     }
 }
 
 function displayResults(results) {
-    resultDiv.textContent = '';
+    resultDiv.innerHTML = '';
     if (!results || results.length === 0) {
         resultDiv.textContent = 'No results found';
         return;
@@ -46,6 +55,8 @@ function displayResults(results) {
         const div = document.createElement('div');
         div.textContent = result.title;
         div.onclick = () => playTrack(result.url, result.title);
+        div.style.cursor = 'pointer';
+        div.style.margin = '5px 0';
         resultDiv.appendChild(div);
     });
 }
@@ -63,9 +74,14 @@ async function playTrack(url, title) {
     audioPlayer.src = `/stream?url=${encodeURIComponent(url)}`;
     isPlaying = true;
     playBtn.innerHTML = '<i class="fa fa-pause"></i>';
-    audioPlayer.play();
-    resultDiv.textContent = `Now Playing: ${title}`;
-    updateProgress();
+    try {
+        await audioPlayer.play();
+        resultDiv.textContent = `Now Playing: ${title}`;
+        updateProgress();
+    } catch (error) {
+        console.error('Playback error:', error);
+        resultDiv.textContent = 'Error playing track. Check console for details.';
+    }
     await queueNextTrack();
 }
 
@@ -82,7 +98,7 @@ function togglePlay() {
 }
 
 function previousTrack() {
-    // Placeholder: No previous track logic yet, could use history if implemented
+    // Placeholder: Implement history if needed
     resultDiv.textContent = 'Previous not implemented';
 }
 
@@ -147,6 +163,7 @@ function setSleepTimer() {
 async function queueNextTrack() {
     try {
         const recResponse = await fetch('/recommend');
+        if (!recResponse.ok) throw new Error('Network response was not ok');
         const recData = await recResponse.json();
         if (recData.url && recData.title) {
             nextTrack = { url: recData.url, title: recData.title };
@@ -159,6 +176,7 @@ async function queueNextTrack() {
     } catch (error) {
         nextSongDiv.textContent = 'Error getting next track';
         nextTrack = null;
+        console.error('Recommendation error:', error);
     }
 
     audioPlayer.onended = () => {
@@ -175,6 +193,7 @@ async function predownloadTrack(url) {
         const response = await fetch(`/stream?url=${encodeURIComponent(url)}`, {
             headers: { Range: 'bytes=0-163840' }
         });
+        if (!response.ok) throw new Error('Predownload failed');
         const blob = await response.blob();
         console.log('Predownloaded 10 seconds of:', url);
     } catch (error) {
@@ -185,6 +204,7 @@ async function predownloadTrack(url) {
 async function loadRecentSongs() {
     try {
         const response = await fetch('/recent');
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         recentSongsList.innerHTML = '';
         data.forEach(song => {
@@ -195,6 +215,7 @@ async function loadRecentSongs() {
         });
     } catch (error) {
         recentSongsList.innerHTML = '<li>Error loading recent songs</li>';
+        console.error('Recent songs error:', error);
     }
 }
 
@@ -210,5 +231,7 @@ volumeSlider.addEventListener('input', (e) => {
 });
 volumeBtn.addEventListener('click', toggleVolume);
 
-window.onload = loadRecentSongs;
-updateProgress();
+window.onload = () => {
+    loadRecentSongs();
+    updateProgress();
+};

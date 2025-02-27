@@ -12,7 +12,7 @@ const port = config.PORT;
 app.use(cors());
 app.use(express.json());
 
-// Serve static files (e.g., style.css, client.js) from the root
+// Serve static files from the root
 app.use(express.static(path.join(__dirname)));
 
 // Serve index.html as the default route
@@ -37,6 +37,9 @@ function saveSearchHistory() {
 
 app.get('/search', async (req, res) => {
     const query = req.query.q;
+    if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' });
+    }
     try {
         const results = await getVideoResults(query);
         res.json({ results });
@@ -60,13 +63,19 @@ app.get('/stream', (req, res) => {
             '-o', '-',
             '--no-playlist',
         ]);
+
+        // Handle yt-dlp not found
+        ytDlp.on('error', (err) => {
+            console.error('yt-dlp error:', err);
+            if (err.code === 'ENOENT') {
+                return res.status(500).send('yt-dlp not found. Please install it with `pip3 install yt-dlp`.');
+            }
+            res.status(500).send('Streaming failed');
+        });
+
         res.setHeader('Content-Type', 'audio/mpeg');
         ytDlp.stdout.pipe(res);
         ytDlp.stderr.on('data', (data) => console.error('yt-dlp stderr:', data.toString()));
-        ytDlp.on('error', (err) => {
-            console.error('Stream spawn error:', err);
-            if (!res.headersSent) res.status(500).send('Streaming failed');
-        });
         ytDlp.on('close', (code) => {
             if (code !== 0 && !res.headersSent) res.status(500).send('Streaming failed');
         });
@@ -116,7 +125,10 @@ async function getVideoResults(query) {
     };
     return new Promise((resolve, reject) => {
         search(query, opts, (err, results) => {
-            if (err) return reject(err);
+            if (err) {
+                console.error('YouTube search error:', err);
+                return reject(err);
+            }
             if (!results || results.length === 0) return resolve([]);
             const formattedResults = results.map(result => ({
                 title: result.title,
