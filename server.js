@@ -12,13 +12,13 @@ const port = config.PORT;
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the root
-app.use(express.static(path.join(__dirname)));
+// Serve static files from the public folder
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve index.html as the default route
+// Serve index.html from the public folder as the default route
 app.get('/', (req, res) => {
-    console.log('Serving index.html from:', path.join(__dirname, 'index.html'));
-    res.sendFile(path.join(__dirname, 'index.html'));
+    console.log('Serving index.html from:', path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 let searchHistory = [];
