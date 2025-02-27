@@ -1,21 +1,15 @@
 {
     "name": "youtube-audio-player",
     "version": "1.0.0",
-    "private": true,
+    "description": "Simple YouTube Audio Player",
+    "main": "server.js",
     "scripts": {
-      "dev": "nuxt dev",
-      "build": "nuxt build",
-      "start": "nuxt start",
-      "pm2": "nuxt build && pm2 start ecosystem.config.js --env production"
+      "start": "node server.js",
+      "pm2": "node server.js && pm2 start ecosystem.json --env production"
     },
     "dependencies": {
-      "nuxt": "^3.11.2",
-      "vue": "^3.4.21",
+      "express": "^4.18.2",
+      "cors": "^2.8.5",
       "youtube-search": "^1.1.6"
-    },
-    "devDependencies": {
-      "@nuxt/devtools": "^1.0.7",
-      "@nuxtjs/eslint-config-typescript": "^12.1.0",
-      "eslint": "^8.57.0"
     }
   }
