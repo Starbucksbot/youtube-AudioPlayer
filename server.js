@@ -3,8 +3,8 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const search = require('youtube-search');
-const { spawn } = require('child_process'); // For streaming with yt-dlp
-const config = require('./config'); // Load config
+const { spawn } = require('child_process');
+const config = require('./config');
 
 const app = express();
 const port = config.PORT;
@@ -22,6 +22,9 @@ try {
 }
 
 function saveSearchHistory() {
+    if (searchHistory.length > 30) {
+        searchHistory = searchHistory.slice(-30); // Keep last 30
+    }
     fs.writeFileSync('searchHistory.json', JSON.stringify(searchHistory));
 }
 
@@ -44,35 +47,22 @@ app.get('/stream', (req, res) => {
         return res.status(400).send('Invalid video URL');
     }
     try {
-        // Spawn yt-dlp process to stream audio
         const ytDlp = spawn('yt-dlp', [
             url,
-            '-f', 'bestaudio', // Best audio format
-            '-o', '-', // Output to stdout
-            '--no-playlist', // Avoid playlists
+            '-f', 'bestaudio',
+            '-o', '-',
+            '--no-playlist',
         ]);
-
         res.setHeader('Content-Type', 'audio/mpeg');
-
-        // Pipe the audio stream to the response
         ytDlp.stdout.pipe(res);
-
-        ytDlp.stderr.on('data', (data) => {
-            console.error('yt-dlp stderr:', data.toString());
-        });
-
+        ytDlp.stderr.on('data', (data) => console.error('yt-dlp stderr:', data.toString()));
         ytDlp.on('error', (err) => {
             console.error('Stream spawn error:', err);
             if (!res.headersSent) res.status(500).send('Streaming failed');
         });
-
         ytDlp.on('close', (code) => {
-            if (code !== 0) {
-                console.error(`yt-dlp exited with code ${code}`);
-                if (!res.headersSent) res.status(500).send('Streaming failed');
-            }
+            if (code !== 0 && !res.headersSent) res.status(500).send('Streaming failed');
         });
-
     } catch (error) {
         console.error('Stream setup error:', error);
         if (!res.headersSent) res.status(500).send('Streaming error');
@@ -82,7 +72,7 @@ app.get('/stream', (req, res) => {
 app.get('/recommend', async (req, res) => {
     const lastSearch = searchHistory[searchHistory.length - 1];
     if (!lastSearch || !lastSearch.url) {
-        return res.json({ url: null });
+        return res.json({ url: null, title: null });
     }
     try {
         const ytDlp = spawn('yt-dlp', [lastSearch.url, '--dump-json']);
@@ -91,15 +81,18 @@ app.get('/recommend', async (req, res) => {
         ytDlp.on('close', (code) => {
             if (code === 0) {
                 const parsedInfo = JSON.parse(output);
-                const related = parsedInfo.related_videos?.[0]?.id || null;
-                res.json({ url: related ? `https://www.youtube.com/watch?v=${related}` : null });
+                const related = parsedInfo.related_videos?.[0];
+                res.json({
+                    url: related ? `https://www.youtube.com/watch?v=${related.id}` : null,
+                    title: related ? related.title : null
+                });
             } else {
-                res.json({ url: null });
+                res.json({ url: null, title: null });
             }
         });
     } catch (err) {
         console.error('Recommendation error:', err);
-        res.json({ url: null });
+        res.json({ url: null, title: null });
     }
 });
 
@@ -111,7 +104,7 @@ app.get('/recent', (req, res) => {
 async function getVideoResults(query) {
     const opts = {
         maxResults: 5,
-        key: config.YOUTUBE_API_KEY, // Use from config
+        key: config.YOUTUBE_API_KEY,
         type: 'video'
     };
     return new Promise((resolve, reject) => {
@@ -123,7 +116,12 @@ async function getVideoResults(query) {
                 url: result.link
             }));
             if (formattedResults.length > 0) {
-                searchHistory.push({ query, url: formattedResults[0].url, timestamp: Date.now() });
+                searchHistory.push({
+                    query,
+                    url: formattedResults[0].url,
+                    title: formattedResults[0].title,
+                    timestamp: Date.now()
+                });
                 saveSearchHistory();
             }
             resolve(formattedResults);

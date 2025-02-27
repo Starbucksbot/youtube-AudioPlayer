@@ -1,0 +1,29 @@
+!!!
+%html{ lang: "en" }
+  %head
+    %meta{ charset: "UTF-8" }
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1.0" }
+    %title Fine Tunes Radio
+    %link{ rel: "stylesheet", href: "style.css" }
+    %link{ href: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap", rel: "stylesheet" }
+  %body
+    .main-container
+      .sidebar
+        %h2 Recently Played
+        %ul#recent-songs
+      .container
+        .header
+          %span.menu-icon ☰
+          %h1 Music Now!
+          %span.search-icon 🔍
+        .geometric-bg
+        .now-playing
+          %img.album-art{ src: "https://via.placeholder.com/100", alt: "Album Art" }
+          .track-info#result
+        %audio#player{ controls: true }
+        .controls
+          %button.replay-btn{ onclick: "replayTrack()" } Replay
+      .next-sidebar
+        %h2 Next Track
+        #next-song
+    %script{ src: "client.js" }
