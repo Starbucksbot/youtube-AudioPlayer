@@ -17,6 +17,7 @@ app.use(express.static(path.join(__dirname)));
 
 // Serve index.html as the default route
 app.get('/', (req, res) => {
+    console.log('Serving index.html from:', path.join(__dirname, 'index.html'));
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
@@ -24,8 +25,9 @@ let searchHistory = [];
 try {
     const data = fs.readFileSync('searchHistory.json', 'utf8');
     searchHistory = JSON.parse(data);
+    console.log('Loaded search history:', searchHistory.length, 'entries');
 } catch (err) {
-    console.log('Starting with empty search history');
+    console.log('Starting with empty search history:', err.message);
 }
 
 function saveSearchHistory() {
@@ -33,15 +35,19 @@ function saveSearchHistory() {
         searchHistory = searchHistory.slice(-30); // Keep last 30
     }
     fs.writeFileSync('searchHistory.json', JSON.stringify(searchHistory));
+    console.log('Saved search history, length:', searchHistory.length);
 }
 
 app.get('/search', async (req, res) => {
     const query = req.query.q;
+    console.log('Search request for:', query);
     if (!query) {
+        console.log('No query provided');
         return res.status(400).json({ error: 'Query parameter is required' });
     }
     try {
         const results = await getVideoResults(query);
+        console.log('Search results:', results.length);
         res.json({ results });
     } catch (error) {
         console.error('Search error:', error);
@@ -64,7 +70,6 @@ app.get('/stream', (req, res) => {
             '--no-playlist',
         ]);
 
-        // Handle yt-dlp not found
         ytDlp.on('error', (err) => {
             console.error('yt-dlp error:', err);
             if (err.code === 'ENOENT') {
@@ -87,7 +92,9 @@ app.get('/stream', (req, res) => {
 
 app.get('/recommend', async (req, res) => {
     const lastSearch = searchHistory[searchHistory.length - 1];
+    console.log('Last search:', lastSearch);
     if (!lastSearch || !lastSearch.url) {
+        console.log('No last search available');
         return res.json({ url: null, title: null });
     }
     try {
@@ -103,6 +110,7 @@ app.get('/recommend', async (req, res) => {
                     title: related ? related.title : null
                 });
             } else {
+                console.log('Recommendation failed, code:', code);
                 res.json({ url: null, title: null });
             }
         });
@@ -114,6 +122,7 @@ app.get('/recommend', async (req, res) => {
 
 app.get('/recent', (req, res) => {
     const recent = searchHistory.slice(-5).reverse();
+    console.log('Recent tracks:', recent.length);
     res.json(recent);
 });
 
@@ -129,7 +138,10 @@ async function getVideoResults(query) {
                 console.error('YouTube search error:', err);
                 return reject(err);
             }
-            if (!results || results.length === 0) return resolve([]);
+            if (!results || results.length === 0) {
+                console.log('No search results found');
+                return resolve([]);
+            }
             const formattedResults = results.map(result => ({
                 title: result.title,
                 url: result.link
