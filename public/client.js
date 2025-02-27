@@ -33,6 +33,11 @@ function displayResults(results) {
 }
 
 function playTrack(url) {
+    if (!url) {
+        resultDiv.textContent = 'No valid URL to play';
+        return;
+    }
+    console.log('Playing URL:', url); // Debug on client side
     audioPlayer.src = `/stream?url=${encodeURIComponent(url)}`;
     audioPlayer.play();
     resultDiv.textContent = `Playing: ${url.split('v=')[1] || url}`;
@@ -48,7 +53,6 @@ function playTrack(url) {
         }
     };
 }
-
 async function loadRecentSongs() {
     try {
         const response = await fetch('/recent');

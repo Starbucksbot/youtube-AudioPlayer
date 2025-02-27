@@ -8,7 +8,7 @@ const search = require('youtube-search');
 const app = express();
 const port = 4200;
 
-const YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE'; // Replace this!
+const YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE'; // Ensure this is valid!
 
 app.use(cors());
 app.use(express.json());
@@ -32,13 +32,18 @@ app.get('/search', async (req, res) => {
         const results = await getVideoResults(query);
         res.json({ results });
     } catch (error) {
-        console.error(error);
+        console.error('Search error:', error);
         res.status(500).json({ error: 'Search failed' });
     }
 });
 
 app.get('/stream', (req, res) => {
     const url = req.query.url;
+    console.log('Streaming URL:', url); // Log the URL for debugging
+    if (!url || !ytdl.validateURL(url)) {
+        console.error('Invalid or missing URL:', url);
+        return res.status(400).send('Invalid video URL');
+    }
     try {
         const stream = ytdl(url, {
             filter: 'audioonly',
@@ -46,8 +51,13 @@ app.get('/stream', (req, res) => {
             requestOptions: { headers: { 'User-Agent': 'Mozilla/5.0' } }
         });
         res.setHeader('Content-Type', 'audio/mpeg');
+        stream.on('error', (err) => {
+            console.error('Stream error:', err);
+            res.status(500).send('Streaming failed');
+        });
         stream.pipe(res);
     } catch (error) {
+        console.error('Stream setup error:', error);
         res.status(500).send('Streaming error');
     }
 });
@@ -64,20 +74,19 @@ app.get('/recommend', (req, res) => {
             res.json({ url: related ? `https://www.youtube.com/watch?v=${related}` : null });
         })
         .catch(err => {
-            console.error(err);
+            console.error('Recommendation error:', err);
             res.json({ url: null });
         });
 });
 
 app.get('/recent', (req, res) => {
-    // Return last 5 searches, most recent first
     const recent = searchHistory.slice(-5).reverse();
     res.json(recent);
 });
 
 async function getVideoResults(query) {
     const opts = {
-        maxResults: 5, // Fetch 5 results instead of 1
+        maxResults: 5,
         key: YOUTUBE_API_KEY,
         type: 'video'
     };
@@ -90,7 +99,6 @@ async function getVideoResults(query) {
                 title: result.title,
                 url: result.link
             }));
-            // Add to history only if a result is playable
             if (formattedResults.length > 0) {
                 searchHistory.push({ query, url: formattedResults[0].url, timestamp: Date.now() });
                 saveSearchHistory();
