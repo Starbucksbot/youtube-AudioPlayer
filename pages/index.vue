@@ -25,7 +25,7 @@
           :duration="duration"
           @toggle-play="togglePlay"
           @previous="previousTrack"
-          @next="playNextTrack"  <!-- Renamed from nextTrack to playNextTrack -->
+          @next="playNextTrack"  
           @toggle-volume="toggleVolume"
         />
         <div class="controls">
@@ -471,3 +471,4 @@
       width: 100px;
     }
   }
+  </style>
